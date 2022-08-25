@@ -1,0 +1,279 @@
+openapi: 3.0.0
+info:
+  title: EIC-Admin-Exp-Api
+  version: '1'
+servers:
+  - url: http://api/
+paths:
+  /plan/search:
+    get:
+      operationId: Plan_Search_Get
+      parameters:
+        - $ref: '#/components/parameters/planYear'
+        - $ref: '#/components/parameters/planId'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/pbp'
+        - $ref: '#/components/parameters/daysSupply'
+        - $ref: '#/components/parameters/drugTier'
+        - $ref: '#/components/parameters/pharmacyCostType'
+        - $ref: '#/components/parameters/language'
+        - $ref: '#/components/parameters/groupId'
+        - $ref: '#/components/parameters/isEGWP'
+      responses:
+        '200':
+          description: Plan_Search_Get
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+                example: 
+                  [{
+                    "PlanId": 6,
+                    "PlanName": "EnvisionRxPlus",
+                    "PlanYear": 2020,
+                    "Pbp": "014",
+                    "PbpDescription": null,
+                    "IsEGWP": false,
+                    "GroupId": "EICH",
+                    "State": "OH",
+                    "StateName": "Ohio",
+                    "Lis25": 3.60,
+                    "Lis50": 7.10,
+                    "Lis75": 10.70,
+                    "Lis100": 14.20,
+                    "Deductible": 435.00,
+                    "DeductibleDescription": "Tier 3 - Tier 5",
+                    "Premium": 14.20,
+                    "Deminimis": false,
+                    "PlanDetails": [{
+                      "PharmacyCostType": "MailPreferred",
+                      "DrugTier": 1,
+                      "DrugTierCaption": "Tier 1",
+                      "DaysSupply": "Days90",
+                      "CostAmount": 0.00,
+                      "CostPercentage": null,
+                      "MinAmount": null,
+                      "MaxAmount": null,
+                      "Is31DaySupply": false,
+                      "DrugCategory": "Preferred Generic",
+                      "SubCategory": null
+                    }],
+                    "PlanYearStages": [{
+                        "Stage": 1,
+                        "StageDescription": "Deductible",
+                        "StageLimit": 0.00,
+                        "StageGenericDescription": "2020 Stage 1 Generic",
+                        "StageBrandDescription": "2020 Stage 1 Brand"
+                      },
+                      {
+                        "Stage": 2,
+                        "StageDescription": "Initial Coverage",
+                        "StageLimit": 4020.00,
+                        "StageGenericDescription": "2020 Stage 2 Generic",
+                        "StageBrandDescription": "2020 Stage 2 Brand"
+                      }
+                    ],
+                    "SkipDeductable": true
+                  }]
+        500:
+          description: Internal Server Error
+          content:
+           application/json:  
+            schema:
+              example:
+components:
+  schemas:
+    Plan:
+      type: object
+      properties:
+        PlanId:
+          type: integer
+          format: int32
+        PlanName:
+          type: string
+        PlanYear:
+          type: integer
+          format: int32
+        Pbp:
+          type: string
+        PbpDescription:
+          type: string
+        IsEGWP:
+          type: boolean
+        GroupId:
+          type: string
+        State:
+          type: string
+        StateName:
+          type: string
+        Lis25:
+          type: number
+        Lis50:
+          type: number
+        Lis75:
+          type: number
+        Lis100:
+          type: number
+        Deductible:
+          type: number
+        DeductibleDescription:
+          type: string
+        Premium:
+          type: number
+        Deminimis:
+          type: boolean
+        PlanDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanDetail'
+        PlanYearStages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanYearStage'
+        SkipDeductable:
+          type: boolean
+    PlanDetail:
+        type: object
+        properties:
+          PharmacyCostType:
+            type: string
+            enum:
+              - RetailPreferred
+              - RetailStandard
+              - MailPreferred
+              - MailStandard
+          DrugTier:
+            type: integer
+            format: int32
+          DrugTierCaption:
+            type: string
+          DaysSupply:
+            type: string
+            enum:
+              - Days30
+              - Days60
+              - Days90
+          CostAmount:
+            type: number
+            format: double
+          CostPercentage:
+            type: number
+          MinAmount:
+            type: number
+          MaxAmount:
+            type: number
+          Is31DaySupply:
+            type: boolean
+          DrugCategory:
+            type: string
+          SubCategory:
+            type: string
+    PlanYearStage:
+      type: object
+      properties:
+          Stage:
+            type: integer
+            format: int32
+          StageDescription:
+            type: string
+          StageLimit:
+            type: number
+            format: double
+          StageGenericDescription:
+            type: string
+          StageBrandDescription:
+            type: string
+  parameters: 
+    planYear:
+      in: query 
+      name: planYear
+      required: true
+      schema:
+        type: integer
+        format: int32
+    planId:
+      in: query 
+      name: planId
+      required: false
+      schema:
+        type: integer
+    state:
+      in: query 
+      name: state
+      required: false
+      schema:
+        type: string
+    pbp:
+      in: query 
+      name: pbp
+      required: false
+      schema:
+        type: string
+    daysSupply:     
+      in: query 
+      name: daysSupply
+      required: false
+      schema:
+        type: integer
+    drugTier:
+      in: query 
+      name: drugTier
+      required: false
+      schema:
+        type: integer
+    pharmacyCostType:
+      in: query 
+      name: pharmacyCostType
+      required: false
+      schema:
+        type: string
+        enum:
+          - RetailPreferred
+          - RetailStandard
+          - MailPreferred
+          - MailStandard        
+    language:
+      in: query 
+      name: language
+      required: true
+      schema:
+        type: string
+    groupId:
+      in: query 
+      name: groupId
+      required: false
+      schema:
+        type: string
+    isEGWP:
+      in: query 
+      name: isEGWP
+      required: false
+      schema:
+        type: boolean
+    TenantIdentifier:
+      in: header
+      name: TenantIdentifier
+      description: Tenant Identifier
+      schema:
+        type: string
+        default: Xol4PiCv+fGHX6O9VLHEAchlamGPHWD0m56m/3+gDrPjkNm65Rnb0Q==
+      required: true
+    client_id:
+      in: header
+      name: client_id
+      schema:
+        type: string
+      required: true
+    client_secret:
+      in: header
+      name: client_id
+      schema:
+        type: string
+      required: true
+    channelid:
+      in: header
+      name: client_id
+      description: Unique Id to determine the Client
+      schema:
+        type: integer
+      required: false
